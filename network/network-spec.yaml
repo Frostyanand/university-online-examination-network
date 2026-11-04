@@ -1,0 +1,872 @@
+version: "1.0"
+metadata:
+  title: "University Online Examination Network Specification"
+  author: "Senior Network Systems Engineering Team"
+  date: "2026-11-04"
+  design_baseline: "v1.0"
+  description: "Machine-readable single source of truth for university examination network simulation"
+
+parent_blocks:
+  campus_allocation:
+    cidr: "10.20.10.0/23"
+    network: "10.20.10.0"
+    netmask: "255.255.254.0"
+    total_addresses: 512
+    range_start: "10.20.10.0"
+    range_end: "10.20.11.255"
+  transit_allocation:
+    cidr: "10.20.255.0/24"
+    network: "10.20.255.0"
+    netmask: "255.255.255.0"
+    total_addresses: 256
+  external_test_network:
+    cidr: "198.51.100.0/24"
+    network: "198.51.100.0"
+    netmask: "255.255.255.0"
+    total_addresses: 256
+  future_expansion_block:
+    cidr: "10.20.12.0/22"
+    network: "10.20.12.0"
+    netmask: "255.255.252.0"
+    total_addresses: 1024
+
+vlans:
+  - id: 10
+    name: "LAB-A"
+    cidr: "10.20.10.0/26"
+    network: "10.20.10.0"
+    netmask: "255.255.255.192"
+    first_usable: "10.20.10.1"
+    last_usable: "10.20.10.62"
+    broadcast: "10.20.10.63"
+    gateway_vip: "10.20.10.1"
+    dsw1_ip: "10.20.10.2"
+    dsw2_ip: "10.20.10.3"
+    primary_gateway: "DSW1"
+    vrrp_group: 10
+    hsrp_group: 10
+    planned_hosts: 40
+    usable_hosts: 59
+    dhcp_enabled: true
+    dhcp_pool_a:
+      server: "DHCP-DNS-1"
+      start: "10.20.10.10"
+      end: "10.20.10.34"
+      count: 25
+    dhcp_pool_b:
+      server: "DHCP-DNS-2"
+      start: "10.20.10.35"
+      end: "10.20.10.59"
+      count: 25
+
+  - id: 20
+    name: "LAB-B"
+    cidr: "10.20.10.64/26"
+    network: "10.20.10.64"
+    netmask: "255.255.255.192"
+    first_usable: "10.20.10.65"
+    last_usable: "10.20.10.126"
+    broadcast: "10.20.10.127"
+    gateway_vip: "10.20.10.65"
+    dsw1_ip: "10.20.10.66"
+    dsw2_ip: "10.20.10.67"
+    primary_gateway: "DSW2"
+    vrrp_group: 20
+    hsrp_group: 20
+    planned_hosts: 40
+    usable_hosts: 59
+    dhcp_enabled: true
+    dhcp_pool_a:
+      server: "DHCP-DNS-1"
+      start: "10.20.10.74"
+      end: "10.20.10.98"
+      count: 25
+    dhcp_pool_b:
+      server: "DHCP-DNS-2"
+      start: "10.20.10.99"
+      end: "10.20.10.123"
+      count: 25
+
+  - id: 30
+    name: "LAB-C"
+    cidr: "10.20.10.128/26"
+    network: "10.20.10.128"
+    netmask: "255.255.255.192"
+    first_usable: "10.20.10.129"
+    last_usable: "10.20.10.190"
+    broadcast: "10.20.10.191"
+    gateway_vip: "10.20.10.129"
+    dsw1_ip: "10.20.10.130"
+    dsw2_ip: "10.20.10.131"
+    primary_gateway: "DSW1"
+    vrrp_group: 30
+    hsrp_group: 30
+    planned_hosts: 40
+    usable_hosts: 59
+    dhcp_enabled: true
+    dhcp_pool_a:
+      server: "DHCP-DNS-1"
+      start: "10.20.10.138"
+      end: "10.20.10.162"
+      count: 25
+    dhcp_pool_b:
+      server: "DHCP-DNS-2"
+      start: "10.20.10.163"
+      end: "10.20.10.187"
+      count: 25
+
+  - id: 40
+    name: "SERVERS"
+    cidr: "10.20.10.192/27"
+    network: "10.20.10.192"
+    netmask: "255.255.255.224"
+    first_usable: "10.20.10.193"
+    last_usable: "10.20.10.222"
+    broadcast: "10.20.10.223"
+    gateway_vip: "10.20.10.193"
+    dsw1_ip: "10.20.10.194"
+    dsw2_ip: "10.20.10.195"
+    primary_gateway: "DSW2"
+    vrrp_group: 40
+    hsrp_group: 40
+    planned_hosts: 12
+    usable_hosts: 27
+    dhcp_enabled: false
+
+  - id: 50
+    name: "ADMIN"
+    cidr: "10.20.10.224/27"
+    network: "10.20.10.224"
+    netmask: "255.255.255.224"
+    first_usable: "10.20.10.225"
+    last_usable: "10.20.10.254"
+    broadcast: "10.20.10.255"
+    gateway_vip: "10.20.10.225"
+    dsw1_ip: "10.20.10.226"
+    dsw2_ip: "10.20.10.227"
+    primary_gateway: "DSW1"
+    vrrp_group: 50
+    hsrp_group: 50
+    planned_hosts: 15
+    usable_hosts: 27
+    dhcp_enabled: true
+    dhcp_pool_a:
+      server: "DHCP-DNS-1"
+      start: "10.20.10.230"
+      end: "10.20.10.239"
+      count: 10
+    dhcp_pool_b:
+      server: "DHCP-DNS-2"
+      start: "10.20.10.240"
+      end: "10.20.10.249"
+      count: 10
+
+  - id: 60
+    name: "FACULTY"
+    cidr: "10.20.11.0/27"
+    network: "10.20.11.0"
+    netmask: "255.255.255.224"
+    first_usable: "10.20.11.1"
+    last_usable: "10.20.11.30"
+    broadcast: "10.20.11.31"
+    gateway_vip: "10.20.11.1"
+    dsw1_ip: "10.20.11.2"
+    dsw2_ip: "10.20.11.3"
+    primary_gateway: "DSW2"
+    vrrp_group: 60
+    hsrp_group: 60
+    planned_hosts: 12
+    usable_hosts: 27
+    dhcp_enabled: true
+    dhcp_pool_a:
+      server: "DHCP-DNS-1"
+      start: "10.20.11.10"
+      end: "10.20.11.19"
+      count: 10
+    dhcp_pool_b:
+      server: "DHCP-DNS-2"
+      start: "10.20.11.20"
+      end: "10.20.11.29"
+      count: 10
+
+  - id: 70
+    name: "NET-MGMT"
+    cidr: "10.20.11.32/27"
+    network: "10.20.11.32"
+    netmask: "255.255.255.224"
+    first_usable: "10.20.11.33"
+    last_usable: "10.20.11.62"
+    broadcast: "10.20.11.63"
+    gateway_vip: "10.20.11.33"
+    dsw1_ip: "10.20.11.34"
+    dsw2_ip: "10.20.11.35"
+    primary_gateway: "DSW1"
+    vrrp_group: 70
+    hsrp_group: 70
+    planned_hosts: 12
+    usable_hosts: 27
+    dhcp_enabled: false
+
+  - id: 80
+    name: "GUEST"
+    cidr: "10.20.11.64/27"
+    network: "10.20.11.64"
+    netmask: "255.255.255.224"
+    first_usable: "10.20.11.65"
+    last_usable: "10.20.11.94"
+    broadcast: "10.20.11.95"
+    gateway_vip: "10.20.11.65"
+    dsw1_ip: "10.20.11.66"
+    dsw2_ip: "10.20.11.67"
+    primary_gateway: "DSW2"
+    vrrp_group: 80
+    hsrp_group: 80
+    planned_hosts: 20
+    usable_hosts: 27
+    dhcp_enabled: true
+    dhcp_pool_a:
+      server: "DHCP-DNS-1"
+      start: "10.20.11.70"
+      end: "10.20.11.79"
+      count: 10
+    dhcp_pool_b:
+      server: "DHCP-DNS-2"
+      start: "10.20.11.80"
+      end: "10.20.11.89"
+      count: 10
+
+servers:
+  - id: "EXAM-WEB-1"
+    name: "Primary Examination Web Server"
+    vlan: 40
+    ip: "10.20.10.200"
+    netmask: "255.255.255.224"
+    gateway: "10.20.10.193"
+    role: "Primary Web Node"
+    vrrp_service_vip: "10.20.10.210"
+    vrrp_priority: 110
+
+  - id: "EXAM-WEB-2"
+    name: "Standby Examination Web Server"
+    vlan: 40
+    ip: "10.20.10.201"
+    netmask: "255.255.255.224"
+    gateway: "10.20.10.193"
+    role: "Standby Web Node"
+    vrrp_service_vip: "10.20.10.210"
+    vrrp_priority: 90
+
+  - id: "DHCP-DNS-1"
+    name: "Primary DHCP and DNS Server"
+    vlan: 40
+    ip: "10.20.10.202"
+    netmask: "255.255.255.224"
+    gateway: "10.20.10.193"
+    role: "Primary DHCP/DNS"
+    dns_zones:
+      "exam.university.test": "10.20.10.210"
+
+  - id: "DHCP-DNS-2"
+    name: "Secondary DHCP and DNS Server"
+    vlan: 40
+    ip: "10.20.10.203"
+    netmask: "255.255.255.224"
+    gateway: "10.20.10.193"
+    role: "Secondary DHCP/DNS"
+    dns_zones:
+      "exam.university.test": "10.20.10.210"
+
+  - id: "NET-MON"
+    name: "Network Monitoring & Log Server"
+    vlan: 40
+    ip: "10.20.10.204"
+    netmask: "255.255.255.224"
+    gateway: "10.20.10.193"
+    role: "Monitoring"
+
+  - id: "TEST-SERVER"
+    name: "External Simulated Web Server"
+    vlan: 0
+    ip: "198.51.100.10"
+    netmask: "255.255.255.0"
+    gateway: "198.51.100.1"
+    role: "External Test Server"
+
+dns_records:
+  - domain: "exam.university.test"
+    ip: "10.20.10.210"
+    type: "A"
+  - domain: "ns1.university.test"
+    ip: "10.20.10.202"
+    type: "A"
+  - domain: "ns2.university.test"
+    ip: "10.20.10.203"
+    type: "A"
+
+routed_links:
+  - id: "EDGE-R1_ISP1"
+    subnet: "10.20.255.0/30"
+    network: "10.20.255.0"
+    netmask: "255.255.255.252"
+    device_a: "EDGE-R1"
+    interface_a: "eth0"
+    ip_a: "10.20.255.1"
+    device_b: "ISP1"
+    interface_b: "eth0"
+    ip_b: "10.20.255.2"
+    ospf: false
+    type: "WAN"
+
+  - id: "EDGE-R2_ISP1"
+    subnet: "10.20.255.4/30"
+    network: "10.20.255.4"
+    netmask: "255.255.255.252"
+    device_a: "EDGE-R2"
+    interface_a: "eth0"
+    ip_a: "10.20.255.5"
+    device_b: "ISP1"
+    interface_b: "eth1"
+    ip_b: "10.20.255.6"
+    ospf: false
+    type: "WAN"
+
+  - id: "DSW1_EDGE-R1"
+    subnet: "10.20.255.8/30"
+    network: "10.20.255.8"
+    netmask: "255.255.255.252"
+    device_a: "DSW1"
+    interface_a: "eth1"
+    ip_a: "10.20.255.9"
+    device_b: "EDGE-R1"
+    interface_b: "eth1"
+    ip_b: "10.20.255.10"
+    ospf: true
+    ospf_area: "0.0.0.0"
+    type: "P2P"
+
+  - id: "DSW1_EDGE-R2"
+    subnet: "10.20.255.12/30"
+    network: "10.20.255.12"
+    netmask: "255.255.255.252"
+    device_a: "DSW1"
+    interface_a: "eth2"
+    ip_a: "10.20.255.13"
+    device_b: "EDGE-R2"
+    interface_b: "eth1"
+    ip_b: "10.20.255.14"
+    ospf: true
+    ospf_area: "0.0.0.0"
+    type: "P2P"
+
+  - id: "DSW2_EDGE-R1"
+    subnet: "10.20.255.16/30"
+    network: "10.20.255.16"
+    netmask: "255.255.255.252"
+    device_a: "DSW2"
+    interface_a: "eth1"
+    ip_a: "10.20.255.17"
+    device_b: "EDGE-R1"
+    interface_b: "eth2"
+    ip_b: "10.20.255.18"
+    ospf: true
+    ospf_area: "0.0.0.0"
+    type: "P2P"
+
+  - id: "DSW2_EDGE-R2"
+    subnet: "10.20.255.20/30"
+    network: "10.20.255.20"
+    netmask: "255.255.255.252"
+    device_a: "DSW2"
+    interface_a: "eth2"
+    ip_a: "10.20.255.21"
+    device_b: "EDGE-R2"
+    interface_b: "eth2"
+    ip_b: "10.20.255.22"
+    ospf: true
+    ospf_area: "0.0.0.0"
+    type: "P2P"
+
+ospf_config:
+  area: "0.0.0.0"
+  routers:
+    - id: "EDGE-R1"
+      router_id: "10.20.255.1"
+      networks:
+        - "10.20.255.8/30"
+        - "10.20.255.16/30"
+      default_route_originate: true
+      default_route_metric: 10
+    - id: "EDGE-R2"
+      router_id: "10.20.255.5"
+      networks:
+        - "10.20.255.12/30"
+        - "10.20.255.20/30"
+      default_route_originate: true
+      default_route_metric: 10
+    - id: "DSW1"
+      router_id: "10.20.255.9"
+      networks:
+        - "10.20.255.8/30"
+        - "10.20.255.12/30"
+        - "10.20.10.0/23"
+    - id: "DSW2"
+      router_id: "10.20.255.17"
+      networks:
+        - "10.20.255.16/30"
+        - "10.20.255.20/30"
+        - "10.20.10.0/23"
+
+devices:
+  routers:
+    - id: "ISP1"
+      name: "Simulated ISP Gateway"
+      type: "router"
+      model: "2911"
+      kathara_image: "kathara/frr"
+      x: 500
+      y: 50
+    - id: "EDGE-R1"
+      name: "Primary Campus Edge Router"
+      type: "router"
+      model: "2911"
+      kathara_image: "kathara/frr"
+      x: 350
+      y: 150
+    - id: "EDGE-R2"
+      name: "Secondary Campus Edge Router"
+      type: "router"
+      model: "2911"
+      kathara_image: "kathara/frr"
+      x: 650
+      y: 150
+
+  distribution_switches:
+    - id: "DSW1"
+      name: "Core / Distribution Switch 1"
+      type: "l3switch"
+      model: "3560-24PS"
+      kathara_image: "kathara/frr"
+      x: 350
+      y: 280
+      active_vlans: [10, 30, 50, 70]
+      standby_vlans: [20, 40, 60, 80]
+      stp_priority: 4096
+
+    - id: "DSW2"
+      name: "Core / Distribution Switch 2"
+      type: "l3switch"
+      model: "3560-24PS"
+      kathara_image: "kathara/frr"
+      x: 650
+      y: 280
+      active_vlans: [20, 40, 60, 80]
+      standby_vlans: [10, 30, 50, 70]
+      stp_priority: 8192
+
+  access_switches:
+    - id: "ASW-LA-1"
+      name: "Lab A Access Switch 1"
+      type: "l2switch"
+      model: "2960-24TT"
+      kathara_image: "kathara/base"
+      primary_vlan: 10
+      x: 100
+      y: 420
+    - id: "ASW-LA-2"
+      name: "Lab A Access Switch 2"
+      type: "l2switch"
+      model: "2960-24TT"
+      kathara_image: "kathara/base"
+      primary_vlan: 10
+      x: 180
+      y: 420
+
+    - id: "ASW-LB-1"
+      name: "Lab B Access Switch 1"
+      type: "l2switch"
+      model: "2960-24TT"
+      kathara_image: "kathara/base"
+      primary_vlan: 20
+      x: 280
+      y: 420
+    - id: "ASW-LB-2"
+      name: "Lab B Access Switch 2"
+      type: "l2switch"
+      model: "2960-24TT"
+      kathara_image: "kathara/base"
+      primary_vlan: 20
+      x: 360
+      y: 420
+
+    - id: "ASW-LC-1"
+      name: "Lab C Access Switch 1"
+      type: "l2switch"
+      model: "2960-24TT"
+      kathara_image: "kathara/base"
+      primary_vlan: 30
+      x: 460
+      y: 420
+    - id: "ASW-LC-2"
+      name: "Lab C Access Switch 2"
+      type: "l2switch"
+      model: "2960-24TT"
+      kathara_image: "kathara/base"
+      primary_vlan: 30
+      x: 540
+      y: 420
+
+    - id: "ASW-SRV-1"
+      name: "Server Access Switch 1"
+      type: "l2switch"
+      model: "2960-24TT"
+      kathara_image: "kathara/base"
+      primary_vlan: 40
+      x: 640
+      y: 420
+    - id: "ASW-SRV-2"
+      name: "Server Access Switch 2"
+      type: "l2switch"
+      model: "2960-24TT"
+      kathara_image: "kathara/base"
+      primary_vlan: 40
+      x: 720
+      y: 420
+
+    - id: "ASW-ADM-1"
+      name: "Admin / Faculty Access Switch 1"
+      type: "l2switch"
+      model: "2960-24TT"
+      kathara_image: "kathara/base"
+      primary_vlan: 50
+      x: 820
+      y: 420
+    - id: "ASW-ADM-2"
+      name: "Management / Guest Access Switch 2"
+      type: "l2switch"
+      model: "2960-24TT"
+      kathara_image: "kathara/base"
+      primary_vlan: 70
+      x: 900
+      y: 420
+
+  endpoints:
+    - id: "PC-LA-1"
+      name: "Student Client LA-01"
+      vlan: 10
+      type: "pc"
+      model: "PC-PT"
+      kathara_image: "kathara/base"
+      switch: "ASW-LA-1"
+      ip_mode: "dhcp"
+      fallback_ip: "10.20.10.15/26"
+      gateway: "10.20.10.1"
+      x: 80
+      y: 540
+
+    - id: "PC-LA-2"
+      name: "Student Client LA-02"
+      vlan: 10
+      type: "pc"
+      model: "PC-PT"
+      kathara_image: "kathara/base"
+      switch: "ASW-LA-2"
+      ip_mode: "dhcp"
+      fallback_ip: "10.20.10.16/26"
+      gateway: "10.20.10.1"
+      x: 160
+      y: 540
+
+    - id: "PC-LB-1"
+      name: "Student Client LB-01"
+      vlan: 20
+      type: "pc"
+      model: "PC-PT"
+      kathara_image: "kathara/base"
+      switch: "ASW-LB-1"
+      ip_mode: "dhcp"
+      fallback_ip: "10.20.10.80/26"
+      gateway: "10.20.10.65"
+      x: 260
+      y: 540
+
+    - id: "PC-LB-2"
+      name: "Student Client LB-02"
+      vlan: 20
+      type: "pc"
+      model: "PC-PT"
+      kathara_image: "kathara/base"
+      switch: "ASW-LB-2"
+      ip_mode: "dhcp"
+      fallback_ip: "10.20.10.81/26"
+      gateway: "10.20.10.65"
+      x: 340
+      y: 540
+
+    - id: "PC-LC-1"
+      name: "Student Client LC-01"
+      vlan: 30
+      type: "pc"
+      model: "PC-PT"
+      kathara_image: "kathara/base"
+      switch: "ASW-LC-1"
+      ip_mode: "dhcp"
+      fallback_ip: "10.20.10.145/26"
+      gateway: "10.20.10.129"
+      x: 440
+      y: 540
+
+    - id: "PC-LC-2"
+      name: "Student Client LC-02"
+      vlan: 30
+      type: "pc"
+      model: "PC-PT"
+      kathara_image: "kathara/base"
+      switch: "ASW-LC-2"
+      ip_mode: "dhcp"
+      fallback_ip: "10.20.10.146/26"
+      gateway: "10.20.10.129"
+      x: 520
+      y: 540
+
+    - id: "PC-ADM-1"
+      name: "Administrator Terminal 01"
+      vlan: 50
+      type: "pc"
+      model: "PC-PT"
+      kathara_image: "kathara/base"
+      switch: "ASW-ADM-1"
+      ip_mode: "dhcp"
+      fallback_ip: "10.20.10.235/27"
+      gateway: "10.20.10.225"
+      x: 800
+      y: 540
+
+    - id: "PC-FAC-1"
+      name: "Faculty Terminal 01"
+      vlan: 60
+      type: "pc"
+      model: "PC-PT"
+      kathara_image: "kathara/base"
+      switch: "ASW-ADM-1"
+      ip_mode: "dhcp"
+      fallback_ip: "10.20.11.15/27"
+      gateway: "10.20.11.1"
+      x: 840
+      y: 540
+
+    - id: "PC-MGMT-1"
+      name: "NOC Management Console"
+      vlan: 70
+      type: "pc"
+      model: "PC-PT"
+      kathara_image: "kathara/base"
+      switch: "ASW-ADM-2"
+      ip_mode: "static"
+      fallback_ip: "10.20.11.45/27"
+      gateway: "10.20.11.33"
+      x: 880
+      y: 540
+
+    - id: "PC-GST-1"
+      name: "Guest Terminal 01"
+      vlan: 80
+      type: "pc"
+      model: "PC-PT"
+      kathara_image: "kathara/base"
+      switch: "ASW-ADM-2"
+      ip_mode: "dhcp"
+      fallback_ip: "10.20.11.75/27"
+      gateway: "10.20.11.65"
+      x: 920
+      y: 540
+
+acl_policies:
+  - id: "ACL-STUDENT-ACCESS"
+    name: "Student Examination & Core Services Access Policy"
+    source_vlans: [10, 20, 30]
+    rules:
+      - action: "permit"
+        protocol: "tcp"
+        destination: "10.20.10.210"
+        port: 443
+        description: "Allow HTTPS to Exam Service VIP"
+      - action: "permit"
+        protocol: "tcp"
+        destination: "10.20.10.210"
+        port: 80
+        description: "Allow HTTP to Exam Service VIP"
+      - action: "permit"
+        protocol: "udp"
+        destination: "10.20.10.202"
+        port: 53
+        description: "Allow DNS to DHCP-DNS-1"
+      - action: "permit"
+        protocol: "udp"
+        destination: "10.20.10.203"
+        port: 53
+        description: "Allow DNS to DHCP-DNS-2"
+      - action: "permit"
+        protocol: "udp"
+        destination: "255.255.255.255"
+        port: 67
+        description: "Allow DHCP discovery"
+      - action: "deny"
+        protocol: "ip"
+        destination: "10.20.11.32/27"
+        description: "Block all Student access to Network Management VLAN 70"
+      - action: "permit"
+        protocol: "icmp"
+        destination: "10.20.10.0/23"
+        description: "Allow campus diagnostic ping"
+
+  - id: "ACL-GUEST-ISOLATION"
+    name: "Guest Network Total Campus Isolation Policy"
+    source_vlans: [80]
+    rules:
+      - action: "deny"
+        protocol: "ip"
+        destination: "10.20.10.0/23"
+        description: "Block Guest access to all internal campus subnets"
+      - action: "permit"
+        protocol: "udp"
+        destination: "10.20.10.202"
+        port: 53
+        description: "Permit DNS resolution"
+      - action: "permit"
+        protocol: "udp"
+        destination: "10.20.10.203"
+        port: 53
+        description: "Permit DNS resolution"
+      - action: "permit"
+        protocol: "ip"
+        destination: "198.51.100.0/24"
+        description: "Permit Guest outbound access to external simulated internet"
+
+fault_scenarios:
+  - id: "F01"
+    name: "Normal Baseline Network Operation"
+    description: "All routers, switches, links, and redundant services operating nominally under baseline conditions."
+    target_device: "NONE"
+    target_interface: "NONE"
+    action: "verify_baseline"
+    expected_outcome: "All pings, DNS queries, DHCP allocations, HTTP requests, OSPF adjacencies, and VRRP gateway states pass 100%."
+    recovery_action: "none"
+
+  - id: "F02"
+    name: "Primary Distribution Switch Failure (DSW1 Down)"
+    description: "Complete power or hardware failure of DSW1, testing first-hop VRRP takeover and RSTP reconvergence."
+    target_device: "DSW1"
+    target_interface: "ALL"
+    action: "stop_node"
+    expected_outcome: "DSW2 claims VRRP VIPs for VLAN 10, 30, 50, 70. Client traffic recovers in < 3s."
+    recovery_action: "start_node"
+
+  - id: "F03"
+    name: "Secondary Distribution Switch Failure (DSW2 Down)"
+    description: "Failure of secondary switch DSW2, testing VLAN 20, 40, 60, 80 takeover by DSW1."
+    target_device: "DSW2"
+    target_interface: "ALL"
+    action: "stop_node"
+    expected_outcome: "DSW1 takes over server, lab B, and faculty gateways seamlessly."
+    recovery_action: "start_node"
+
+  - id: "F04"
+    name: "Access Switch Uplink Failure"
+    description: "Severing primary trunk uplink from ASW-LA-1 to DSW1, verifying RSTP unblocking."
+    target_device: "ASW-LA-1"
+    target_interface: "eth1"
+    action: "link_down"
+    expected_outcome: "RSTP transitions redundant port to DSW2 from Alternate/Discarding to Forwarding."
+    recovery_action: "link_up"
+
+  - id: "F05"
+    name: "Individual Access Switch Failure"
+    description: "Failure of ASW-LA-1, verifying that paired switch ASW-LA-2 maintains lab uptime."
+    target_device: "ASW-LA-1"
+    target_interface: "ALL"
+    action: "stop_node"
+    expected_outcome: "Hosts on ASW-LA-1 lose connectivity; hosts on ASW-LA-2 continue uninterrupted."
+    recovery_action: "start_node"
+
+  - id: "F06"
+    name: "Campus Edge Router Failure (EDGE-R1 Down)"
+    description: "Failure of EDGE-R1, validating OSPF routing reconvergence toward EDGE-R2."
+    target_device: "EDGE-R1"
+    target_interface: "ALL"
+    action: "stop_node"
+    expected_outcome: "OSPF withdraws EDGE-R1 routes; DSW1 and DSW2 forward external traffic via EDGE-R2."
+    recovery_action: "start_node"
+
+  - id: "F07"
+    name: "Routed Point-to-Point Uplink Failure"
+    description: "Failure of DSW1-to-EDGE-R1 routed link (10.20.255.8/30)."
+    target_device: "DSW1"
+    target_interface: "eth1"
+    action: "interface_down"
+    expected_outcome: "OSPF routes DSW1 traffic through DSW1-EDGE-R2 (10.20.255.12/30) alternate path."
+    recovery_action: "interface_up"
+
+  - id: "F08"
+    name: "Primary Examination Server Failure"
+    description: "Web daemon crash on EXAM-WEB-1, validating VRRP Service VIP (10.20.10.210) failover to EXAM-WEB-2."
+    target_device: "EXAM-WEB-1"
+    target_interface: "http_service"
+    action: "stop_service"
+    expected_outcome: "Keepalived triggers VIP migration to EXAM-WEB-2; HTTP requests continue to succeed."
+    recovery_action: "start_service"
+
+  - id: "F09"
+    name: "Primary DHCP and DNS Server Failure"
+    description: "Failure of DHCP-DNS-1, verifying DHCP Pool B and secondary DNS on DHCP-DNS-2."
+    target_device: "DHCP-DNS-1"
+    target_interface: "ALL"
+    action: "stop_node"
+    expected_outcome: "New clients receive DHCP lease from DHCP-DNS-2; DNS queries continue via secondary server."
+    recovery_action: "start_node"
+
+  - id: "F10"
+    name: "Link Impairment (Packet Loss & Latency Injection)"
+    description: "Injecting 10% packet loss and 50ms jitter on server uplink using Linux tc netem."
+    target_device: "DSW1"
+    target_interface: "eth0"
+    action: "apply_netem"
+    netem_params: "loss 10% delay 50ms 10ms"
+    expected_outcome: "Observed ping packet loss and TCP retransmissions visible in captured traffic."
+    recovery_action: "clear_netem"
+
+  - id: "F11"
+    name: "Guest ACL Isolation Verification"
+    description: "Enforcing and auditing ACL rule blocking Guest PC from accessing examination server VIP."
+    target_device: "DSW1"
+    target_interface: "vlan80"
+    action: "test_acl_drop"
+    expected_outcome: "Guest ping/HTTP to 10.20.10.210 is explicitly dropped by packet filter."
+    recovery_action: "restore_baseline"
+
+  - id: "F12"
+    name: "Dynamic Host Scaling in Existing Lab"
+    description: "Provisioning an additional student endpoint in Lab A and verifying DHCP DORA assignment."
+    target_device: "PC-LA-03"
+    target_interface: "eth0"
+    action: "add_client"
+    expected_outcome: "New client leases valid IP from pool; subnet headroom confirmed."
+    recovery_action: "remove_client"
+
+  - id: "F13"
+    name: "Campus Expansion: Additional Examination Lab D"
+    description: "Allocating next reserved /26 (10.20.11.96/26) as VLAN 90 (LAB-D)."
+    target_device: "LAB-D"
+    target_interface: "NEW_VLAN"
+    action: "provision_lab_d"
+    expected_outcome: "New lab allocated without address conflicts or redeployment disruptions."
+    recovery_action: "deprovision_lab_d"
+
+  - id: "F14"
+    name: "Simulated ISP Upstream Failure"
+    description: "Failure of ISP1 router, isolating campus from external test network."
+    target_device: "ISP1"
+    target_interface: "ALL"
+    action: "stop_node"
+    expected_outcome: "External test server becomes unreachable; internal exam portal remains 100% operational."
+    recovery_action: "start_node"
+

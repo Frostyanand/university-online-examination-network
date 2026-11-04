@@ -1,0 +1,88 @@
+#!/bin/bash
+ip link set eth0 up
+ip addr add 10.20.255.17/30 dev eth1
+ip link set eth1 up
+ip addr add 10.20.255.21/30 dev eth2
+ip link set eth2 up
+
+# Create VLAN-aware Linux bridge
+ip link add name br-lan type bridge vlan_filtering 1
+ip link set dev br-lan up
+
+# Add trunk to peer DSW
+ip link set dev eth0 master br-lan
+bridge vlan add dev eth0 vid 10-80
+
+ip link set dev eth3 master br-lan
+bridge vlan add dev eth3 vid 10-80
+ip link set dev eth3 up
+ip link set dev eth4 master br-lan
+bridge vlan add dev eth4 vid 10-80
+ip link set dev eth4 up
+ip link set dev eth5 master br-lan
+bridge vlan add dev eth5 vid 10-80
+ip link set dev eth5 up
+ip link set dev eth6 master br-lan
+bridge vlan add dev eth6 vid 10-80
+ip link set dev eth6 up
+ip link set dev eth7 master br-lan
+bridge vlan add dev eth7 vid 10-80
+ip link set dev eth7 up
+ip link set dev eth8 master br-lan
+bridge vlan add dev eth8 vid 10-80
+ip link set dev eth8 up
+ip link set dev eth9 master br-lan
+bridge vlan add dev eth9 vid 10-80
+ip link set dev eth9 up
+ip link set dev eth10 master br-lan
+bridge vlan add dev eth10 vid 10-80
+ip link set dev eth10 up
+ip link set dev eth11 master br-lan
+bridge vlan add dev eth11 vid 10-80
+ip link set dev eth11 up
+ip link set dev eth12 master br-lan
+bridge vlan add dev eth12 vid 10-80
+ip link set dev eth12 up
+ip link add link br-lan name vlan10 type vlan id 10
+ip addr add 10.20.10.3/26 dev vlan10
+ip link set dev vlan10 up
+ip link add link br-lan name vlan20 type vlan id 20
+ip addr add 10.20.10.67/26 dev vlan20
+ip link set dev vlan20 up
+ip link add link br-lan name vlan30 type vlan id 30
+ip addr add 10.20.10.131/26 dev vlan30
+ip link set dev vlan30 up
+ip link add link br-lan name vlan40 type vlan id 40
+ip addr add 10.20.10.195/27 dev vlan40
+ip link set dev vlan40 up
+ip link add link br-lan name vlan50 type vlan id 50
+ip addr add 10.20.10.227/27 dev vlan50
+ip link set dev vlan50 up
+ip link add link br-lan name vlan60 type vlan id 60
+ip addr add 10.20.11.3/27 dev vlan60
+ip link set dev vlan60 up
+ip link add link br-lan name vlan70 type vlan id 70
+ip addr add 10.20.11.35/27 dev vlan70
+ip link set dev vlan70 up
+ip link add link br-lan name vlan80 type vlan id 80
+ip addr add 10.20.11.67/27 dev vlan80
+ip link set dev vlan80 up
+
+sysctl -w net.ipv4.ip_forward=1
+/usr/lib/frr/frrinit.sh start
+sleep 1
+service keepalived start
+
+# Setup ACLs using iptables
+# Allow established
+iptables -A FORWARD -m state --state ESTABLISHED,RELATED -j ACCEPT
+# Block Guest VLAN 80 to internal campus
+iptables -A FORWARD -s 10.20.11.64/27 -d 10.20.10.0/23 -j DROP
+# Block Student VLANs to Net Mgmt VLAN 70
+iptables -A FORWARD -s 10.20.10.0/24 -d 10.20.11.32/27 -j DROP
+# Allow Student VLANs to Exam Service VIP (80/443)
+iptables -A FORWARD -s 10.20.10.0/24 -d 10.20.10.210 -p tcp --dport 80 -j ACCEPT
+iptables -A FORWARD -s 10.20.10.0/24 -d 10.20.10.210 -p tcp --dport 443 -j ACCEPT
+iptables -A FORWARD -s 10.20.10.0/24 -d 10.20.10.202 -p udp --dport 53 -j ACCEPT
+iptables -A FORWARD -s 10.20.10.0/24 -d 10.20.10.203 -p udp --dport 53 -j ACCEPT
+iptables -A FORWARD -p icmp -j ACCEPT

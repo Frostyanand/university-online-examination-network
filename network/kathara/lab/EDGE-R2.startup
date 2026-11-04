@@ -1,0 +1,7 @@
+ip addr add 10.20.255.5/30 dev eth0
+ip link set eth0 up
+ip addr add 10.20.255.14/30 dev eth1
+ip link set eth1 up
+ip addr add 10.20.255.22/30 dev eth2
+ip link set eth2 up
+/usr/lib/frr/frrinit.sh start

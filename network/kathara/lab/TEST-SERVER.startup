@@ -1,0 +1,4 @@
+ip addr add 198.51.100.10/24 dev eth0
+ip link set eth0 up
+ip route add default via 198.51.100.1
+python3 -m http.server 80 -d /var/www/html &

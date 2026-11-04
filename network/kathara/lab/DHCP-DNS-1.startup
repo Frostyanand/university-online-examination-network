@@ -1,0 +1,4 @@
+ip addr add 10.20.10.202/27 dev eth0
+ip link set eth0 up
+ip route add default via 10.20.10.193
+dnsmasq -C /etc/dnsmasq.conf

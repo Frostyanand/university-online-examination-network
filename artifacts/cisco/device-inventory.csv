@@ -1,0 +1,32 @@
+Device ID,Display Name,Role,Layer,Hardware Model,Kathara Image,Management / Primary IP
+ISP1,Simulated ISP Gateway,Edge / Transit Router,Layer 3,2911,kathara/frr,10.20.255.x
+EDGE-R1,Primary Campus Edge Router,Edge / Transit Router,Layer 3,2911,kathara/frr,10.20.255.x
+EDGE-R2,Secondary Campus Edge Router,Edge / Transit Router,Layer 3,2911,kathara/frr,10.20.255.x
+DSW1,Core / Distribution Switch 1,Multilayer Core Switch,Layer 3 / L2 Gateway,3560-24PS,kathara/frr,10.20.11.34/35
+DSW2,Core / Distribution Switch 2,Multilayer Core Switch,Layer 3 / L2 Gateway,3560-24PS,kathara/frr,10.20.11.34/35
+ASW-LA-1,Lab A Access Switch 1,Access Layer Switch,Layer 2,2960-24TT,kathara/base,10.20.11.4x
+ASW-LA-2,Lab A Access Switch 2,Access Layer Switch,Layer 2,2960-24TT,kathara/base,10.20.11.4x
+ASW-LB-1,Lab B Access Switch 1,Access Layer Switch,Layer 2,2960-24TT,kathara/base,10.20.11.4x
+ASW-LB-2,Lab B Access Switch 2,Access Layer Switch,Layer 2,2960-24TT,kathara/base,10.20.11.4x
+ASW-LC-1,Lab C Access Switch 1,Access Layer Switch,Layer 2,2960-24TT,kathara/base,10.20.11.4x
+ASW-LC-2,Lab C Access Switch 2,Access Layer Switch,Layer 2,2960-24TT,kathara/base,10.20.11.4x
+ASW-SRV-1,Server Access Switch 1,Access Layer Switch,Layer 2,2960-24TT,kathara/base,10.20.11.4x
+ASW-SRV-2,Server Access Switch 2,Access Layer Switch,Layer 2,2960-24TT,kathara/base,10.20.11.4x
+ASW-ADM-1,Admin / Faculty Access Switch 1,Access Layer Switch,Layer 2,2960-24TT,kathara/base,10.20.11.4x
+ASW-ADM-2,Management / Guest Access Switch 2,Access Layer Switch,Layer 2,2960-24TT,kathara/base,10.20.11.4x
+EXAM-WEB-1,Primary Examination Web Server,Primary Web Node,Host Service,Server-PT,kathara/base,10.20.10.200
+EXAM-WEB-2,Standby Examination Web Server,Standby Web Node,Host Service,Server-PT,kathara/base,10.20.10.201
+DHCP-DNS-1,Primary DHCP and DNS Server,Primary DHCP/DNS,Host Service,Server-PT,kathara/base,10.20.10.202
+DHCP-DNS-2,Secondary DHCP and DNS Server,Secondary DHCP/DNS,Host Service,Server-PT,kathara/base,10.20.10.203
+NET-MON,Network Monitoring & Log Server,Monitoring,Host Service,Server-PT,kathara/base,10.20.10.204
+TEST-SERVER,External Simulated Web Server,External Test Server,Host Service,Server-PT,kathara/base,198.51.100.10
+PC-LA-1,Student Client LA-01,Workstation Endpoint,Host Node,PC-PT,kathara/base,10.20.10.15/26
+PC-LA-2,Student Client LA-02,Workstation Endpoint,Host Node,PC-PT,kathara/base,10.20.10.16/26
+PC-LB-1,Student Client LB-01,Workstation Endpoint,Host Node,PC-PT,kathara/base,10.20.10.80/26
+PC-LB-2,Student Client LB-02,Workstation Endpoint,Host Node,PC-PT,kathara/base,10.20.10.81/26
+PC-LC-1,Student Client LC-01,Workstation Endpoint,Host Node,PC-PT,kathara/base,10.20.10.145/26
+PC-LC-2,Student Client LC-02,Workstation Endpoint,Host Node,PC-PT,kathara/base,10.20.10.146/26
+PC-ADM-1,Administrator Terminal 01,Workstation Endpoint,Host Node,PC-PT,kathara/base,10.20.10.235/27
+PC-FAC-1,Faculty Terminal 01,Workstation Endpoint,Host Node,PC-PT,kathara/base,10.20.11.15/27
+PC-MGMT-1,NOC Management Console,Workstation Endpoint,Host Node,PC-PT,kathara/base,10.20.11.45/27
+PC-GST-1,Guest Terminal 01,Workstation Endpoint,Host Node,PC-PT,kathara/base,10.20.11.75/27

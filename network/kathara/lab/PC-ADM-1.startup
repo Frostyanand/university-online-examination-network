@@ -1,0 +1,5 @@
+ip addr add 10.20.10.235/27 dev eth0
+ip link set eth0 up
+ip route add default via 10.20.10.225
+echo 'nameserver 10.20.10.202' > /etc/resolv.conf
+echo 'nameserver 10.20.10.203' >> /etc/resolv.conf

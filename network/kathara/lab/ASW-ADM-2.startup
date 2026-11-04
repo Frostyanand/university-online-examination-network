@@ -1,0 +1,14 @@
+#!/bin/bash
+service openvswitch-switch start
+ovs-vsctl add-br br0 -- set bridge br0 datapath_type=netdev
+ovs-vsctl set Bridge br0 rstp_enable=true
+ip link set br0 up
+
+# Trunk ports to DSW1 and DSW2
+ip link set eth0 up
+ip link set eth1 up
+ovs-vsctl add-port br0 eth0 trunks=10,20,30,40,50,60,70,80
+ovs-vsctl add-port br0 eth1 trunks=10,20,30,40,50,60,70,80
+
+ip link set eth2 up && ovs-vsctl add-port br0 eth2 tag=70 # PC-MGMT-1
+ip link set eth3 up && ovs-vsctl add-port br0 eth3 tag=80 # PC-GST-1
