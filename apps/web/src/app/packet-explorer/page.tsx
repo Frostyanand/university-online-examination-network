@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { 
   Network, Play, Download, Filter, ArrowRight, 
-  Layers, CheckCircle2, ShieldAlert, Cpu, HardDrive 
+  Layers, CheckCircle2, ShieldAlert, Cpu 
 } from "lucide-react";
 import { runConnectivityTest } from "@/lib/api";
 
@@ -16,7 +16,6 @@ export default function PacketExplorerPage() {
   const [filterProto, setFilterProto] = useState("ALL");
   const [pcapAvailable, setPcapAvailable] = useState(false);
 
-  // Pre-baked packet journeys with real hop-by-hop decapsulation
   const journeys: Record<string, any[]> = {
     "PC-LAB-A1_to_VIP": [
       {
@@ -124,7 +123,6 @@ export default function PacketExplorerPage() {
     setIsRunning(true);
     setActiveStep(0);
 
-    // Call real test runner on backend
     try {
       await runConnectivityTest({
         test_type: protocol === "HTTP" ? "http" : "ping",
@@ -134,7 +132,7 @@ export default function PacketExplorerPage() {
       });
       setPcapAvailable(true);
     } catch {
-      // Backend simulation offline - fall back to timeline playback
+      // offline simulation mode
     }
 
     let step = 0;
@@ -146,21 +144,20 @@ export default function PacketExplorerPage() {
         clearInterval(interval);
         setIsRunning(false);
       }
-    }, 1200);
+    }, 1000);
   };
 
   return (
     <div className="space-y-6">
       
-      {/* Page Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-border">
+      {/* Title */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-border">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-white flex items-center gap-2.5">
-            <Network className="w-6 h-6 text-accent-cyan" />
-            Packet Journey Explorer
+          <h1 className="text-xl font-semibold text-foreground tracking-tight">
+            Packet Journey & Hop-by-Hop Decapsulation
           </h1>
-          <p className="text-sm text-slate-400">
-            Step-by-step decapsulation, Layer 2 802.1Q tags, VRRP routing, ACL filtering, and packet captures.
+          <p className="text-xs text-muted mt-0.5">
+            Trace real frame transitions, 802.1Q tags, VRRP virtual MAC resolution, and Layer 3 ACL filtering.
           </p>
         </div>
 
@@ -168,56 +165,54 @@ export default function PacketExplorerPage() {
           <a
             href="/api/captures/download/latest.pcap"
             download
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-accent-blue/20 hover:bg-accent-blue/30 text-accent-blue border border-accent-blue/40 text-xs font-medium transition"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-white border border-border hover:bg-panel-subtle text-xs font-medium text-foreground shadow-subtle transition"
           >
-            <Download className="w-3.5 h-3.5" />
-            Download Raw PCAP
+            <Download className="w-3.5 h-3.5 text-muted" />
+            Download Captured PCAP
           </a>
         )}
       </div>
 
-      {/* Control Panel: Source / Dest / Protocol */}
-      <div className="bg-panel border border-border rounded-lg p-5">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+      {/* Control Panel */}
+      <div className="bg-panel border border-border rounded-lg p-4 shadow-subtle">
+        <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 items-end">
           
           <div>
-            <label className="text-xs font-semibold text-slate-300 block mb-1">Source Node</label>
+            <label className="text-xs font-medium text-muted block mb-1">Source Workstation</label>
             <select
               value={source}
               onChange={(e) => setSource(e.target.value)}
-              className="w-full bg-slate-900 border border-border rounded px-3 py-2 text-xs font-mono text-white focus:outline-none"
+              className="w-full bg-white border border-border rounded px-3 py-1.5 text-xs font-mono text-foreground focus:outline-none focus:border-brand"
             >
               <option value="PC-LAB-A1">PC-LAB-A1 (VLAN 20 Exam Client)</option>
               <option value="PC-LAB-B1">PC-LAB-B1 (VLAN 30 Exam Client)</option>
-              <option value="PC-FAC-1">PC-FAC-1 (VLAN 50 Faculty)</option>
-              <option value="PC-GUEST-1">PC-GUEST-1 (VLAN 80 Guest - ACL Test)</option>
+              <option value="PC-GUEST-1">PC-GUEST-1 (VLAN 80 Quarantined)</option>
             </select>
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-slate-300 block mb-1">Destination Target</label>
+            <label className="text-xs font-medium text-muted block mb-1">Destination Target</label>
             <select
               value={dest}
               onChange={(e) => setDest(e.target.value)}
-              className="w-full bg-slate-900 border border-border rounded px-3 py-2 text-xs font-mono text-white focus:outline-none"
+              className="w-full bg-white border border-border rounded px-3 py-1.5 text-xs font-mono text-foreground focus:outline-none focus:border-brand"
             >
               <option value="10.20.10.210">10.20.10.210 (Exam Web VIP)</option>
               <option value="10.20.10.10">10.20.10.10 (SRV-WEB-1 Physical)</option>
-              <option value="10.20.10.1">10.20.10.1 (DSW-1 Default Gateway)</option>
-              <option value="10.20.10.5">10.20.10.5 (DNS / DHCP Server)</option>
+              <option value="10.20.10.1">10.20.10.1 (DSW-1 Default VIP)</option>
             </select>
           </div>
 
           <div>
-            <label className="text-xs font-semibold text-slate-300 block mb-1">Protocol / Service</label>
+            <label className="text-xs font-medium text-muted block mb-1">Protocol Service</label>
             <select
               value={protocol}
               onChange={(e) => setProtocol(e.target.value)}
-              className="w-full bg-slate-900 border border-border rounded px-3 py-2 text-xs font-mono text-white focus:outline-none"
+              className="w-full bg-white border border-border rounded px-3 py-1.5 text-xs font-mono text-foreground focus:outline-none focus:border-brand"
             >
               <option value="HTTP">HTTP (TCP Port 80)</option>
-              <option value="ICMP">ICMP Echo Request (Ping)</option>
-              <option value="DNS">DNS Query (UDP Port 53)</option>
+              <option value="ICMP">ICMP Echo (Ping)</option>
+              <option value="DNS">DNS Query (UDP 53)</option>
             </select>
           </div>
 
@@ -225,125 +220,99 @@ export default function PacketExplorerPage() {
             <button
               onClick={handleSimulateJourney}
               disabled={isRunning}
-              className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-accent-blue hover:bg-blue-600 disabled:opacity-50 text-white rounded text-xs font-semibold shadow transition"
+              className="w-full inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-md bg-brand hover:bg-brand-hover text-white text-xs font-medium shadow-subtle transition disabled:opacity-50"
             >
               <Play className="w-3.5 h-3.5 fill-current" />
-              {isRunning ? "Transmitting..." : "Trace Packet Journey"}
+              {isRunning ? "Tracing..." : "Trace Packet Journey"}
             </button>
           </div>
 
         </div>
       </div>
 
-      {/* Filter Tabs */}
-      <div className="flex items-center justify-between border-b border-border pb-2">
-        <div className="flex items-center gap-2 text-xs font-semibold text-slate-400">
-          <Filter className="w-3.5 h-3.5" />
-          Protocol Filter:
-        </div>
-        <div className="flex items-center gap-1">
-          {["ALL", "ARP", "ETH", "802.1Q", "IPv4", "TCP", "ICMP"].map((p) => (
-            <button
-              key={p}
-              onClick={() => setFilterProto(p)}
-              className={`px-2.5 py-1 rounded text-[11px] font-mono transition ${
-                filterProto === p 
-                  ? "bg-accent-cyan/20 text-accent-cyan border border-accent-cyan/40" 
-                  : "text-slate-400 hover:text-white"
-              }`}
-            >
-              {p}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Interactive Step-by-Step Timeline & Inspection */}
+      {/* Main Grid: Steps on Left, Decapsulation on Right */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
-        {/* Timeline (2 cols) */}
+        {/* Step-by-Step Traversal Cards (2 cols) */}
         <div className="lg:col-span-2 space-y-3">
           {filteredSteps.map((s, idx) => {
             const isCurrent = activeStep === idx;
             const isDone = activeStep >= idx;
+
             return (
               <div
                 key={idx}
                 onClick={() => setActiveStep(idx)}
-                className={`p-4 rounded-lg border transition cursor-pointer ${
+                className={`p-4 rounded-lg border transition cursor-pointer shadow-subtle ${
                   isCurrent
-                    ? "bg-slate-900 border-accent-cyan ring-1 ring-accent-cyan/50"
+                    ? "bg-white border-brand ring-2 ring-brand/10"
                     : isDone
-                    ? "bg-panel border-border hover:border-slate-600"
-                    : "bg-panel/50 border-border/50 opacity-60"
+                    ? "bg-white border-border hover:border-slate-300"
+                    : "bg-panel-subtle/60 border-border opacity-70"
                 }`}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold font-mono ${
-                      isDone ? "bg-accent-blue text-white" : "bg-slate-800 text-slate-500"
+                    <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-mono font-semibold ${
+                      isDone ? "bg-brand text-white" : "bg-slate-200 text-muted"
                     }`}>
                       {s.step}
                     </span>
-                    <span className="font-semibold text-sm text-white font-mono">{s.device}</span>
-                    <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-slate-800 text-accent-cyan border border-slate-700">
+                    <span className="font-semibold text-xs text-foreground font-mono">{s.device}</span>
+                    <span className="text-[10px] uppercase font-mono px-1.5 py-0.5 rounded bg-panel-subtle text-foreground border border-border">
                       {s.proto}
                     </span>
                   </div>
-                  <span className="text-xs text-slate-400 font-mono">{s.layer}</span>
+                  <span className="text-[11px] text-muted font-sans">{s.layer}</span>
                 </div>
 
-                <p className="mt-2 text-xs text-slate-300 font-sans leading-relaxed">
+                <p className="mt-2 text-xs text-slate-700 leading-relaxed font-sans">
                   {s.summary}
                 </p>
 
-                <div className="mt-2 pt-2 border-t border-slate-800/80 flex items-center gap-4 text-[11px] font-mono text-slate-500">
-                  <span>Src MAC: <span className="text-slate-400">{s.src_mac}</span></span>
-                  <span>Dst MAC: <span className="text-slate-400">{s.dst_mac}</span></span>
+                <div className="mt-2 pt-2 border-t border-border flex items-center gap-4 text-[11px] font-mono text-muted">
+                  <span>Src MAC: <span className="text-foreground">{s.src_mac}</span></span>
+                  <span>Dst MAC: <span className="text-foreground">{s.dst_mac}</span></span>
                 </div>
               </div>
             );
           })}
         </div>
 
-        {/* Selected Packet Header Dissector (1 col) */}
+        {/* Packet Header Dissection (1 col) */}
         <div className="space-y-4">
-          <div className="bg-panel border border-border rounded-lg p-4 space-y-4">
-            <h3 className="text-sm font-semibold text-white flex items-center gap-2">
-              <Layers className="w-4 h-4 text-accent-cyan" />
-              Packet Header Dissection
+          <div className="bg-panel border border-border rounded-lg p-4 shadow-subtle space-y-3">
+            <h3 className="text-xs font-semibold text-foreground uppercase tracking-wider">
+              Packet Header Inspection
             </h3>
 
             {currentJourney[activeStep] ? (
               <div className="space-y-3 font-mono text-xs">
                 
-                {/* Frame Info */}
-                <div className="bg-slate-950 p-2.5 rounded border border-slate-800">
-                  <div className="text-[11px] text-accent-blue font-bold mb-1">Ethernet II Header</div>
-                  <div className="text-slate-400">Src MAC: {currentJourney[activeStep].src_mac}</div>
-                  <div className="text-slate-400">Dst MAC: {currentJourney[activeStep].dst_mac}</div>
-                  <div className="text-slate-400">Type: 0x0800 (IPv4) or 0x8100 (802.1Q)</div>
+                <div className="p-2.5 rounded bg-panel-subtle border border-border space-y-1">
+                  <div className="text-[11px] font-bold text-brand font-sans">Ethernet II Header</div>
+                  <div className="text-muted">Src MAC: {currentJourney[activeStep].src_mac}</div>
+                  <div className="text-muted">Dst MAC: {currentJourney[activeStep].dst_mac}</div>
+                  <div className="text-muted">EtherType: 0x0800 (IPv4) / 0x8100 (802.1Q)</div>
                 </div>
 
-                {/* Layer 3 Info */}
-                <div className="bg-slate-950 p-2.5 rounded border border-slate-800">
-                  <div className="text-[11px] text-accent-green font-bold mb-1">IPv4 Header / Routing</div>
-                  <div className="text-slate-400">Source: {source === "PC-GUEST-1" ? "10.20.80.50" : "10.20.20.10"}</div>
-                  <div className="text-slate-400">Destination: {dest}</div>
-                  <div className="text-slate-400">Protocol: {protocol} (TTL: 64)</div>
+                <div className="p-2.5 rounded bg-panel-subtle border border-border space-y-1">
+                  <div className="text-[11px] font-bold text-status-success font-sans">IPv4 Network Header</div>
+                  <div className="text-muted">Source IP: {source === "PC-GUEST-1" ? "10.20.80.50" : "10.20.20.10"}</div>
+                  <div className="text-muted">Target IP: {dest}</div>
+                  <div className="text-muted">TTL: 64 &bull; Protocol: {protocol}</div>
                 </div>
 
-                {/* Payload / Action */}
-                <div className="bg-slate-950 p-2.5 rounded border border-slate-800">
-                  <div className="text-[11px] text-accent-cyan font-bold mb-1">Decoded Payload Context</div>
-                  <p className="text-[11px] font-sans text-slate-300">
+                <div className="p-2.5 rounded bg-panel-subtle border border-border space-y-1">
+                  <div className="text-[11px] font-bold text-foreground font-sans">Decoded Context & Action</div>
+                  <p className="text-[11px] font-sans text-slate-600 leading-relaxed">
                     {currentJourney[activeStep].details}
                   </p>
                 </div>
 
               </div>
             ) : (
-              <div className="text-xs text-slate-500 py-6 text-center">
+              <div className="text-xs text-muted py-6 text-center">
                 Select a step on the left to inspect header bytes.
               </div>
             )}
@@ -355,4 +324,3 @@ export default function PacketExplorerPage() {
     </div>
   );
 }
-

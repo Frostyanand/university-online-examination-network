@@ -1,17 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { Binary, Layers, Calculator, CheckCircle2, AlertCircle, ArrowRight, Database, Server } from "lucide-react";
+import { 
+  Binary, Calculator, CheckCircle2, AlertCircle, 
+  ArrowRight, Layers, Table as TableIcon 
+} from "lucide-react";
 
 export default function AddressingPage() {
-  // Subnet Calculator State
   const [calcIp, setCalcIp] = useState("10.20.10.0");
   const [calcPrefix, setCalcPrefix] = useState(24);
+  const [viewMode, setViewMode] = useState<"vlsm" | "matrix" | "calculator">("vlsm");
 
-  // VLSM vs FLSM view toggle
-  const [viewMode, setViewMode] = useState<"vlsm" | "flsm" | "matrix">("vlsm");
-
-  // Basic IP calculations
   const calculateSubnet = (ipStr: string, prefix: number) => {
     try {
       const parts = ipStr.split(".").map(Number);
@@ -73,40 +72,39 @@ export default function AddressingPage() {
   return (
     <div className="space-y-6">
       
-      {/* Page Title */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-border">
+      {/* Title & View Navigation */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-border">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-white flex items-center gap-2.5">
-            <Binary className="w-6 h-6 text-accent-cyan" />
-            IP Addressing & VLSM Workbench
+          <h1 className="text-xl font-semibold text-foreground tracking-tight">
+            IP Addressing & VLSM Architecture
           </h1>
-          <p className="text-sm text-slate-400">
-            Authoritative IP allocation plan, VLSM vs FLSM efficiency analysis, and live subnet calculator.
+          <p className="text-xs text-muted mt-0.5">
+            Hierarchical supernet allocation (10.20.0.0/16), VLSM vs FLSM efficiency audit, and CIDR subnet math.
           </p>
         </div>
 
-        {/* View Mode Switcher */}
-        <div className="flex items-center gap-1 bg-panel p-1 rounded-lg border border-border">
+        {/* View Switcher */}
+        <div className="inline-flex rounded-md border border-border bg-white p-0.5 shadow-subtle text-xs">
           <button
             onClick={() => setViewMode("vlsm")}
-            className={`px-3 py-1.5 rounded text-xs font-medium transition ${
-              viewMode === "vlsm" ? "bg-accent-blue text-white shadow" : "text-slate-400 hover:text-white"
+            className={`px-3 py-1.5 rounded font-medium transition ${
+              viewMode === "vlsm" ? "bg-brand text-white shadow-sm" : "text-muted hover:text-foreground"
             }`}
           >
             VLSM Efficiency
           </button>
           <button
             onClick={() => setViewMode("matrix")}
-            className={`px-3 py-1.5 rounded text-xs font-medium transition ${
-              viewMode === "matrix" ? "bg-accent-blue text-white shadow" : "text-slate-400 hover:text-white"
+            className={`px-3 py-1.5 rounded font-medium transition ${
+              viewMode === "matrix" ? "bg-brand text-white shadow-sm" : "text-muted hover:text-foreground"
             }`}
           >
-            Subnet Matrix
+            Subnet Allocation Matrix
           </button>
           <button
-            onClick={() => setViewMode("flsm")}
-            className={`px-3 py-1.5 rounded text-xs font-medium transition ${
-              viewMode === "flsm" ? "bg-accent-blue text-white shadow" : "text-slate-400 hover:text-white"
+            onClick={() => setViewMode("calculator")}
+            className={`px-3 py-1.5 rounded font-medium transition ${
+              viewMode === "calculator" ? "bg-brand text-white shadow-sm" : "text-muted hover:text-foreground"
             }`}
           >
             Subnet Calculator
@@ -118,91 +116,81 @@ export default function AddressingPage() {
       {viewMode === "vlsm" && (
         <div className="space-y-6">
           
-          {/* Executive Efficiency Summary */}
+          {/* 3 Executive Stat Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="bg-panel border border-border rounded-lg p-5">
-              <div className="text-xs text-slate-400 font-medium">VLSM Subnet Efficiency</div>
-              <div className="text-3xl font-bold text-accent-green mt-1">87.4%</div>
-              <div className="text-xs text-slate-400 mt-2">
-                Optimal prefix sizing (/23 for Lab A, /24 for Labs B/C, /30 for transit links) prevents 4,000+ wasted host addresses.
-              </div>
+            <div className="bg-panel border border-border rounded-lg p-4 shadow-subtle">
+              <div className="text-xs font-medium text-muted">VLSM Address Efficiency</div>
+              <div className="text-2xl font-bold text-status-success mt-1">87.4% Utilized</div>
+              <p className="text-xs text-muted mt-1 leading-relaxed">
+                Right-sized subnets (/23 for 380 hosts in Lab A, /24 for Labs B/C, /30 for transit links) prevent over 4,000 wasted host addresses.
+              </p>
             </div>
-            <div className="bg-panel border border-border rounded-lg p-5">
-              <div className="text-xs text-slate-400 font-medium">FLSM Hypothetical Waste</div>
-              <div className="text-3xl font-bold text-accent-red mt-1">~54.2% Waste</div>
-              <div className="text-xs text-slate-400 mt-2">
-                Under fixed /24 masks, Lab A (380 hosts) would cause subnet fragmentation. Under fixed /23 masks, point-to-point links waste 510 IPs each.
-              </div>
+
+            <div className="bg-panel border border-border rounded-lg p-4 shadow-subtle">
+              <div className="text-xs font-medium text-muted">FLSM Hypothetical Waste</div>
+              <div className="text-2xl font-bold text-status-danger mt-1">54.2% Waste</div>
+              <p className="text-xs text-muted mt-1 leading-relaxed">
+                Under fixed /24 masks, Lab A would be split across 2 subnets. Under fixed /23 masks, point-to-point links waste 510 IPs each.
+              </p>
             </div>
-            <div className="bg-panel border border-border rounded-lg p-5">
-              <div className="text-xs text-slate-400 font-medium">Contiguous Supernet</div>
-              <div className="text-3xl font-bold text-accent-cyan mt-1">10.20.0.0/16</div>
-              <div className="text-xs text-slate-400 mt-2">
-                65,536 total addresses reserved for campus examination infrastructure, leaving 88% reserved for future expansion.
-              </div>
+
+            <div className="bg-panel border border-border rounded-lg p-4 shadow-subtle">
+              <div className="text-xs font-medium text-muted">Campus Supernet Scope</div>
+              <div className="text-2xl font-bold text-foreground mt-1">10.20.0.0/16</div>
+              <p className="text-xs text-muted mt-1 leading-relaxed">
+                65,536 total addresses reserved for university examination infrastructure, leaving 88% reserved for multi-year campus expansion.
+              </p>
             </div>
           </div>
 
-          {/* Side by Side Comparative Breakdown */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Structured Comparative Analysis */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             
-            {/* VLSM Card */}
-            <div className="bg-panel border border-accent-green/30 rounded-lg p-5 space-y-4">
-              <div className="flex items-center justify-between">
-                <h3 className="font-semibold text-accent-green text-sm flex items-center gap-2">
-                  <CheckCircle2 className="w-4 h-4" />
-                  Adopted Variable-Length Subnet Masking (VLSM)
-                </h3>
-                <span className="text-xs font-mono bg-accent-green/20 text-accent-green px-2 py-0.5 rounded border border-accent-green/30">
-                  OPTIMAL
-                </span>
+            <div className="bg-panel border border-status-successBorder rounded-lg p-5 shadow-subtle space-y-3">
+              <div className="flex items-center gap-2 text-status-success font-semibold text-sm">
+                <CheckCircle2 className="w-4 h-4" />
+                Variable-Length Subnet Masking (VLSM) &bull; Adopted
               </div>
-              <p className="text-xs text-slate-300 leading-relaxed">
-                Subnets are allocated strictly according to actual host requirements plus a 30% safety margin:
+              <p className="text-xs text-muted leading-relaxed">
+                Subnets are dynamically calculated based strictly on actual host populations plus a 30% expansion margin:
               </p>
-              <ul className="text-xs text-slate-400 space-y-2 font-mono">
-                <li className="flex items-center justify-between bg-slate-900/60 p-2 rounded">
-                  <span>Lab A (380 hosts): <strong>10.20.20.0/23</strong></span>
-                  <span className="text-accent-green">510 usable (74.5% util)</span>
-                </li>
-                <li className="flex items-center justify-between bg-slate-900/60 p-2 rounded">
-                  <span>Lab B/C (190 hosts): <strong>10.20.30.0/24</strong></span>
-                  <span className="text-accent-green">254 usable (74.8% util)</span>
-                </li>
-                <li className="flex items-center justify-between bg-slate-900/60 p-2 rounded">
+              <div className="space-y-2 text-xs font-mono">
+                <div className="p-2.5 bg-panel-subtle rounded border border-border flex items-center justify-between">
+                  <span>Lab A (380 Hosts): <strong>10.20.20.0/23</strong></span>
+                  <span className="text-status-success font-sans">510 usable (74.5% util)</span>
+                </div>
+                <div className="p-2.5 bg-panel-subtle rounded border border-border flex items-center justify-between">
+                  <span>Labs B & C (190 Hosts): <strong>10.20.30.0/24</strong></span>
+                  <span className="text-status-success font-sans">254 usable (74.8% util)</span>
+                </div>
+                <div className="p-2.5 bg-panel-subtle rounded border border-border flex items-center justify-between">
                   <span>Servers & Admin: <strong>10.20.10.0/24</strong></span>
-                  <span className="text-accent-green">Dedicated broadcast domain</span>
-                </li>
-                <li className="flex items-center justify-between bg-slate-900/60 p-2 rounded">
+                  <span className="text-status-success font-sans">Dedicated broadcast domain</span>
+                </div>
+                <div className="p-2.5 bg-panel-subtle rounded border border-border flex items-center justify-between">
                   <span>Point-to-Point Links: <strong>10.20.0.x/30</strong></span>
-                  <span className="text-accent-green">2 usable (100% util)</span>
-                </li>
-              </ul>
+                  <span className="text-status-success font-sans">2 usable (100% util)</span>
+                </div>
+              </div>
             </div>
 
-            {/* FLSM Flaws Card */}
-            <div className="bg-panel border border-accent-red/30 rounded-lg p-5 space-y-4">
-              <div className="flex items-center justify-between">
-                <h3 className="font-semibold text-accent-red text-sm flex items-center gap-2">
-                  <AlertCircle className="w-4 h-4" />
-                  Fixed-Length Subnet Masking (FLSM) Failure Analysis
-                </h3>
-                <span className="text-xs font-mono bg-accent-red/20 text-accent-red px-2 py-0.5 rounded border border-accent-red/30">
-                  REJECTED
-                </span>
+            <div className="bg-panel border border-status-dangerBorder rounded-lg p-5 shadow-subtle space-y-3">
+              <div className="flex items-center gap-2 text-status-danger font-semibold text-sm">
+                <AlertCircle className="w-4 h-4" />
+                Fixed-Length Subnet Masking (FLSM) &bull; Rejected
               </div>
-              <p className="text-xs text-slate-300 leading-relaxed">
-                Why standard FLSM fails for this university examination architecture:
+              <p className="text-xs text-muted leading-relaxed">
+                Why standard Fixed-Length Subnet Masking is technically unacceptable for this architecture:
               </p>
-              <div className="space-y-3 text-xs text-slate-400">
-                <div className="bg-slate-900/60 p-2.5 rounded border border-slate-800">
-                  <span className="font-semibold text-white">Scenario 1: Fixed /24 Everywhere</span>
+              <div className="space-y-2.5 text-xs text-muted">
+                <div className="p-2.5 bg-panel-subtle rounded border border-border">
+                  <span className="font-semibold text-foreground">Deficiency 1: Fixed /24 Everywhere</span>
                   <p className="mt-1">
-                    Lab A requires 380 concurrent exam clients. A /24 provides only 254 usable hosts. Lab A would have to be arbitrarily split across two separate subnets and VLANs, breaking single broadcast domain exam proctoring.
+                    Lab A requires 380 workstations. A /24 provides only 254 usable hosts. Lab A would be split across two separate VLANs, breaking local exam proctoring discovery.
                   </p>
                 </div>
-                <div className="bg-slate-900/60 p-2.5 rounded border border-slate-800">
-                  <span className="font-semibold text-white">Scenario 2: Fixed /23 Everywhere</span>
+                <div className="p-2.5 bg-panel-subtle rounded border border-border">
+                  <span className="font-semibold text-foreground">Deficiency 2: Fixed /23 Everywhere</span>
                   <p className="mt-1">
                     Accommodating Lab A with a fixed /23 across all segments forces 6 point-to-point router links to consume 512 addresses each, wasting 3,060 IP addresses on two-node links.
                   </p>
@@ -212,57 +200,49 @@ export default function AddressingPage() {
 
           </div>
 
-          {/* Allocation Hierarchy Visual Bar */}
-          <div className="bg-panel border border-border rounded-lg p-5 space-y-3">
-            <h3 className="text-sm font-semibold text-white">Supernet Partitioning Visual (10.20.0.0/16)</h3>
-            <div className="w-full h-8 rounded-lg overflow-hidden flex font-mono text-[11px] font-bold text-slate-950">
-              <div style={{ width: "3%" }} className="bg-purple-400 flex items-center justify-center" title="10.20.0.0/24 (Transit /30s)">
-                /30s
-              </div>
-              <div style={{ width: "5%" }} className="bg-blue-400 flex items-center justify-center" title="10.20.10.0/24 (Servers)">
-                SRV
-              </div>
-              <div style={{ width: "15%" }} className="bg-emerald-400 flex items-center justify-center" title="10.20.20.0/23 (Lab A)">
-                Lab A (/23)
-              </div>
-              <div style={{ width: "8%" }} className="bg-teal-400 flex items-center justify-center" title="10.20.30.0/24 (Lab B)">
-                Lab B
-              </div>
-              <div style={{ width: "8%" }} className="bg-cyan-400 flex items-center justify-center" title="10.20.40.0/24 (Lab C)">
-                Lab C
-              </div>
-              <div style={{ width: "12%" }} className="bg-amber-400 flex items-center justify-center" title="VLANs 50,60,70,80">
-                Staff/Adm
-              </div>
-              <div style={{ width: "49%" }} className="bg-slate-700 text-slate-400 flex items-center justify-center">
-                Unallocated Future Growth (~58,000 IPs)
+          {/* Clean Visual Allocation Bar */}
+          <div className="bg-panel border border-border rounded-lg p-5 shadow-subtle space-y-3">
+            <h3 className="text-xs font-semibold text-foreground uppercase tracking-wider">
+              Supernet Address Partitioning (10.20.0.0/16)
+            </h3>
+            <div className="w-full h-7 rounded overflow-hidden flex font-mono text-[10px] font-semibold text-slate-800">
+              <div style={{ width: "3%" }} className="bg-purple-300 flex items-center justify-center" title="Transit /30s">/30</div>
+              <div style={{ width: "5%" }} className="bg-blue-300 flex items-center justify-center" title="Server Farm">SRV</div>
+              <div style={{ width: "16%" }} className="bg-emerald-300 flex items-center justify-center" title="Exam Hall A (/23)">Lab A (/23)</div>
+              <div style={{ width: "8%" }} className="bg-teal-300 flex items-center justify-center" title="Exam Hall B">Lab B</div>
+              <div style={{ width: "8%" }} className="bg-cyan-300 flex items-center justify-center" title="Exam Hall C">Lab C</div>
+              <div style={{ width: "12%" }} className="bg-amber-300 flex items-center justify-center" title="Staff & Admin">Staff</div>
+              <div style={{ width: "48%" }} className="bg-slate-200 text-slate-600 flex items-center justify-center">
+                Unallocated Future Growth (~58,000 Free Addresses)
               </div>
             </div>
-            <div className="flex flex-wrap items-center gap-4 text-xs text-slate-400 pt-1">
-              <span className="flex items-center gap-1.5"><span className="w-3 h-3 bg-purple-400 rounded-sm" /> Transit /30s</span>
-              <span className="flex items-center gap-1.5"><span className="w-3 h-3 bg-blue-400 rounded-sm" /> Exam Server VIP</span>
-              <span className="flex items-center gap-1.5"><span className="w-3 h-3 bg-emerald-400 rounded-sm" /> Exam Lab A (/23)</span>
-              <span className="flex items-center gap-1.5"><span className="w-3 h-3 bg-teal-400 rounded-sm" /> Exam Labs B & C</span>
-              <span className="flex items-center gap-1.5"><span className="w-3 h-3 bg-slate-700 rounded-sm" /> Reserved Expansion</span>
+            <div className="flex flex-wrap items-center gap-4 text-xs text-muted pt-1">
+              <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 bg-purple-300 rounded-sm" /> Transit /30s</span>
+              <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 bg-blue-300 rounded-sm" /> Server Farm VIP</span>
+              <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 bg-emerald-300 rounded-sm" /> Exam Hall A (/23)</span>
+              <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 bg-teal-300 rounded-sm" /> Exam Halls B & C</span>
+              <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 bg-slate-200 rounded-sm" /> Reserved Expansion</span>
             </div>
           </div>
 
         </div>
       )}
 
-      {/* VIEW 2: AUTHORITATIVE SUBNET MATRIX */}
+      {/* VIEW 2: SUBENT MATRIX */}
       {viewMode === "matrix" && (
         <div className="space-y-6">
           
-          {/* VLAN Subnet Table */}
-          <div className="bg-panel border border-border rounded-lg overflow-hidden">
-            <div className="p-4 border-b border-border flex items-center justify-between">
-              <h3 className="text-sm font-semibold text-white">VLAN Logical Subnet Specifications</h3>
-              <span className="text-xs text-slate-400 font-mono">Gateway Ownership: DSW-1 (Master) / DSW-2 (Backup)</span>
+          {/* VLAN Matrix */}
+          <div className="bg-panel border border-border rounded-lg shadow-subtle overflow-hidden">
+            <div className="p-3.5 border-b border-border bg-panel-subtle flex items-center justify-between">
+              <span className="text-xs font-semibold text-foreground uppercase tracking-wider">
+                VLAN Logical Subnet Specifications
+              </span>
+              <span className="text-xs text-muted font-mono">Gateway Ownership: DSW-1 (Master) / DSW-2 (Backup)</span>
             </div>
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs text-slate-300">
-                <thead className="bg-slate-900/80 text-slate-400 uppercase font-mono text-[10px]">
+              <table className="w-full text-left text-xs">
+                <thead className="bg-panel-subtle/60 text-muted uppercase font-mono text-[10px] border-b border-border">
                   <tr>
                     <th className="p-3">VLAN</th>
                     <th className="p-3">Name</th>
@@ -274,18 +254,18 @@ export default function AddressingPage() {
                     <th className="p-3 text-right">Capacity</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-border font-mono">
+                <tbody className="divide-y divide-border font-mono text-foreground">
                   {authoritativeVlans.map((v) => (
-                    <tr key={v.vlan} className="hover:bg-slate-800/40 transition">
-                      <td className="p-3 font-bold text-accent-blue">{v.vlan}</td>
-                      <td className="p-3 font-sans font-medium text-white">{v.name}</td>
-                      <td className="p-3 text-accent-cyan">{v.subnet}</td>
-                      <td className="p-3 font-bold text-accent-green">{v.vip}</td>
-                      <td className="p-3 text-slate-400">{v.dsw1}</td>
-                      <td className="p-3 text-slate-400">{v.dsw2}</td>
-                      <td className="p-3 text-slate-300">{v.pool}</td>
-                      <td className="p-3 text-right text-slate-400 font-sans">
-                        <span className="text-white font-semibold">{v.needed}</span> / {v.hosts}
+                    <tr key={v.vlan} className="hover:bg-panel-subtle/50 transition">
+                      <td className="p-3 font-bold text-brand">{v.vlan}</td>
+                      <td className="p-3 font-sans font-medium">{v.name}</td>
+                      <td className="p-3 font-semibold text-blue-900">{v.subnet}</td>
+                      <td className="p-3 font-bold text-status-success">{v.vip}</td>
+                      <td className="p-3 text-muted">{v.dsw1}</td>
+                      <td className="p-3 text-muted">{v.dsw2}</td>
+                      <td className="p-3 text-slate-700">{v.pool}</td>
+                      <td className="p-3 text-right font-sans">
+                        <span className="font-semibold text-foreground">{v.needed}</span> / {v.hosts}
                       </td>
                     </tr>
                   ))}
@@ -294,31 +274,33 @@ export default function AddressingPage() {
             </div>
           </div>
 
-          {/* Transit Links Table */}
-          <div className="bg-panel border border-border rounded-lg overflow-hidden">
-            <div className="p-4 border-b border-border flex items-center justify-between">
-              <h3 className="text-sm font-semibold text-white">Routed Point-to-Point Transit Links (OSPF Area 0)</h3>
-              <span className="text-xs text-accent-green font-mono">Subnet Mask: 255.255.255.252 (/30)</span>
+          {/* Transit Links */}
+          <div className="bg-panel border border-border rounded-lg shadow-subtle overflow-hidden">
+            <div className="p-3.5 border-b border-border bg-panel-subtle flex items-center justify-between">
+              <span className="text-xs font-semibold text-foreground uppercase tracking-wider">
+                Routed Point-to-Point Transit Links (OSPF Area 0)
+              </span>
+              <span className="text-xs text-status-success font-mono font-medium">Subnet Mask: 255.255.255.252 (/30)</span>
             </div>
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs text-slate-300">
-                <thead className="bg-slate-900/80 text-slate-400 uppercase font-mono text-[10px]">
+              <table className="w-full text-left text-xs">
+                <thead className="bg-panel-subtle/60 text-muted uppercase font-mono text-[10px] border-b border-border">
                   <tr>
-                    <th className="p-3">Physical Segment</th>
+                    <th className="p-3">Segment</th>
                     <th className="p-3">Subnet</th>
                     <th className="p-3">Node 1 IP</th>
                     <th className="p-3">Node 2 IP</th>
                     <th className="p-3">Routing Protocol Purpose</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-border font-mono">
+                <tbody className="divide-y divide-border font-mono text-foreground">
                   {transitLinks.map((t, idx) => (
-                    <tr key={idx} className="hover:bg-slate-800/40 transition">
-                      <td className="p-3 font-sans font-medium text-white">{t.link}</td>
-                      <td className="p-3 text-accent-cyan">{t.subnet}</td>
-                      <td className="p-3 text-accent-blue">{t.r1}</td>
-                      <td className="p-3 text-accent-blue">{t.r2}</td>
-                      <td className="p-3 font-sans text-slate-400">{t.purpose}</td>
+                    <tr key={idx} className="hover:bg-panel-subtle/50 transition">
+                      <td className="p-3 font-sans font-medium">{t.link}</td>
+                      <td className="p-3 font-semibold text-blue-900">{t.subnet}</td>
+                      <td className="p-3 text-brand">{t.r1}</td>
+                      <td className="p-3 text-brand">{t.r2}</td>
+                      <td className="p-3 font-sans text-muted">{t.purpose}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -329,32 +311,29 @@ export default function AddressingPage() {
         </div>
       )}
 
-      {/* VIEW 3: LIVE SUBNET CALCULATOR */}
-      {viewMode === "flsm" && (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          
-          {/* Controls Column */}
-          <div className="bg-panel border border-border rounded-lg p-5 space-y-4">
-            <div className="flex items-center gap-2 text-sm font-semibold text-white">
-              <Calculator className="w-4 h-4 text-accent-blue" />
+      {/* VIEW 3: SUBNET CALCULATOR */}
+      {viewMode === "calculator" && (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="bg-panel border border-border rounded-lg p-5 shadow-subtle space-y-4">
+            <h3 className="text-xs font-semibold text-foreground uppercase tracking-wider">
               Subnet Parameter Input
-            </div>
+            </h3>
 
             <div>
-              <label className="text-xs text-slate-400 block mb-1">Base IPv4 Address</label>
+              <label className="text-xs text-muted block mb-1">Base IPv4 Address</label>
               <input
                 type="text"
                 value={calcIp}
                 onChange={(e) => setCalcIp(e.target.value)}
-                className="w-full bg-slate-900 border border-border rounded px-3 py-2 text-sm font-mono text-white focus:outline-none focus:border-accent-blue"
+                className="w-full bg-white border border-border rounded px-3 py-2 text-xs font-mono text-foreground focus:outline-none focus:border-brand"
                 placeholder="10.20.10.0"
               />
             </div>
 
             <div>
-              <div className="flex justify-between items-center mb-1">
-                <label className="text-xs text-slate-400">CIDR Prefix Length: /{calcPrefix}</label>
-                <span className="text-xs font-mono text-accent-cyan">
+              <div className="flex justify-between items-center mb-1 text-xs">
+                <span className="text-muted">CIDR Prefix Length: /{calcPrefix}</span>
+                <span className="font-mono text-brand font-medium">
                   {calcResult ? calcResult.netmask : ""}
                 </span>
               </div>
@@ -364,40 +343,34 @@ export default function AddressingPage() {
                 max="30"
                 value={calcPrefix}
                 onChange={(e) => setCalcPrefix(Number(e.target.value))}
-                className="w-full accent-accent-blue"
+                className="w-full accent-brand"
               />
-              <div className="flex justify-between text-[10px] text-slate-500 font-mono mt-1">
-                <span>/8 (Class A)</span>
-                <span>/16 (Class B)</span>
-                <span>/24 (Class C)</span>
-                <span>/30 (P2P)</span>
-              </div>
             </div>
 
             <div className="border-t border-border pt-3">
-              <div className="text-xs text-slate-400 mb-2">Preset Exam Architecture Networks:</div>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="text-xs text-muted mb-2 font-medium">Preset Architecture Blocks:</div>
+              <div className="grid grid-cols-2 gap-2 text-xs font-mono">
                 <button
                   onClick={() => { setCalcIp("10.20.20.0"); setCalcPrefix(23); }}
-                  className="px-2 py-1.5 rounded bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 font-mono text-left"
+                  className="px-2 py-1.5 rounded bg-panel-subtle hover:bg-slate-200/60 border border-border text-left"
                 >
                   Lab A (/23)
                 </button>
                 <button
                   onClick={() => { setCalcIp("10.20.10.0"); setCalcPrefix(24); }}
-                  className="px-2 py-1.5 rounded bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 font-mono text-left"
+                  className="px-2 py-1.5 rounded bg-panel-subtle hover:bg-slate-200/60 border border-border text-left"
                 >
                   Servers (/24)
                 </button>
                 <button
                   onClick={() => { setCalcIp("10.20.0.0"); setCalcPrefix(30); }}
-                  className="px-2 py-1.5 rounded bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 font-mono text-left"
+                  className="px-2 py-1.5 rounded bg-panel-subtle hover:bg-slate-200/60 border border-border text-left"
                 >
                   Transit (/30)
                 </button>
                 <button
                   onClick={() => { setCalcIp("10.20.0.0"); setCalcPrefix(16); }}
-                  className="px-2 py-1.5 rounded bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 font-mono text-left"
+                  className="px-2 py-1.5 rounded bg-panel-subtle hover:bg-slate-200/60 border border-border text-left"
                 >
                   Supernet (/16)
                 </button>
@@ -405,52 +378,51 @@ export default function AddressingPage() {
             </div>
           </div>
 
-          {/* Results Column */}
-          <div className="lg:col-span-2 bg-panel border border-border rounded-lg p-5 space-y-4">
-            <h3 className="text-sm font-semibold text-white">Calculated Subnet Attributes</h3>
+          <div className="md:col-span-2 bg-panel border border-border rounded-lg p-5 shadow-subtle space-y-4">
+            <h3 className="text-xs font-semibold text-foreground uppercase tracking-wider">
+              Calculated Subnet Attributes
+            </h3>
 
             {calcResult ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="bg-slate-900/80 p-3 rounded border border-slate-800">
-                  <div className="text-[11px] text-slate-400">Network Address</div>
-                  <div className="text-base font-bold text-accent-blue font-mono mt-0.5">{calcResult.network}</div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                <div className="p-3 rounded bg-panel-subtle border border-border">
+                  <div className="text-muted text-[11px]">Network Address</div>
+                  <div className="text-base font-bold text-brand font-mono mt-0.5">{calcResult.network}</div>
                 </div>
-                <div className="bg-slate-900/80 p-3 rounded border border-slate-800">
-                  <div className="text-[11px] text-slate-400">Broadcast Address</div>
-                  <div className="text-base font-bold text-accent-red font-mono mt-0.5">{calcResult.broadcast}</div>
+                <div className="p-3 rounded bg-panel-subtle border border-border">
+                  <div className="text-muted text-[11px]">Broadcast Address</div>
+                  <div className="text-base font-bold text-status-danger font-mono mt-0.5">{calcResult.broadcast}</div>
                 </div>
-                <div className="bg-slate-900/80 p-3 rounded border border-slate-800">
-                  <div className="text-[11px] text-slate-400">Usable Host Range</div>
-                  <div className="text-xs font-bold text-accent-green font-mono mt-1">
-                    {calcResult.firstUsable} — {calcResult.lastUsable}
+                <div className="p-3 rounded bg-panel-subtle border border-border">
+                  <div className="text-muted text-[11px]">Usable Host Range</div>
+                  <div className="text-xs font-bold text-status-success font-mono mt-1">
+                    {calcResult.firstUsable} &mdash; {calcResult.lastUsable}
                   </div>
                 </div>
-                <div className="bg-slate-900/80 p-3 rounded border border-slate-800">
-                  <div className="text-[11px] text-slate-400">Usable Host Count</div>
-                  <div className="text-base font-bold text-white font-mono mt-0.5">
+                <div className="p-3 rounded bg-panel-subtle border border-border">
+                  <div className="text-muted text-[11px]">Usable Host Count</div>
+                  <div className="text-base font-bold text-foreground font-mono mt-0.5">
                     {calcResult.usableHosts.toLocaleString()} Hosts
                   </div>
                 </div>
-                <div className="bg-slate-900/80 p-3 rounded border border-slate-800">
-                  <div className="text-[11px] text-slate-400">Subnet Mask</div>
-                  <div className="text-xs font-bold text-slate-200 font-mono mt-1">{calcResult.netmask}</div>
+                <div className="p-3 rounded bg-panel-subtle border border-border">
+                  <div className="text-muted text-[11px]">Subnet Mask</div>
+                  <div className="text-xs font-mono font-semibold text-foreground mt-1">{calcResult.netmask}</div>
                 </div>
-                <div className="bg-slate-900/80 p-3 rounded border border-slate-800">
-                  <div className="text-[11px] text-slate-400">Wildcard Mask</div>
-                  <div className="text-xs font-bold text-slate-200 font-mono mt-1">{calcResult.wildcard}</div>
+                <div className="p-3 rounded bg-panel-subtle border border-border">
+                  <div className="text-muted text-[11px]">Wildcard Mask</div>
+                  <div className="text-xs font-mono font-semibold text-foreground mt-1">{calcResult.wildcard}</div>
                 </div>
               </div>
             ) : (
-              <div className="text-accent-red text-xs py-8 text-center font-mono">
-                Invalid IPv4 Address format entered.
+              <div className="text-status-danger text-xs py-8 text-center font-mono">
+                Invalid IPv4 address format entered.
               </div>
             )}
           </div>
-
         </div>
       )}
 
     </div>
   );
 }
-
