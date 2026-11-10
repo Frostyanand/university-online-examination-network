@@ -123,10 +123,10 @@ export default function VivaPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-border">
         <div>
           <h1 className="text-xl font-semibold text-foreground tracking-tight">
-            Academic Networking Principles & Viva Voce Guide
+            Frequently Asked Questions (FAQs) & Technical Reference
           </h1>
           <p className="text-xs text-muted mt-0.5">
-            Authoritative theoretical documentation, viva examination interview questions with answers, and project contribution logs.
+            Authoritative theoretical documentation, frequently asked architectural questions with detailed answers, and project contribution logs.
           </p>
         </div>
 
@@ -138,7 +138,7 @@ export default function VivaPage() {
               activeTab === "viva" ? "bg-brand text-white shadow-sm" : "text-muted hover:text-foreground"
             }`}
           >
-            Viva Questions ({vivaQuestions.length})
+            FAQs ({vivaQuestions.length})
           </button>
           <button
             onClick={() => setActiveTab("concepts")}
@@ -159,7 +159,7 @@ export default function VivaPage() {
         </div>
       </div>
 
-      {/* TAB 1: VIVA Q&A */}
+      {/* TAB 1: FAQ Q&A */}
       {activeTab === "viva" && (
         <div className="space-y-4">
           <div className="relative">
@@ -168,7 +168,7 @@ export default function VivaPage() {
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Filter viva topics (e.g. OSPF, VRRP, VLSM, DHCP Relay, ACL, RSTP)..."
+              placeholder="Filter FAQ topics (e.g. OSPF, VRRP, VLSM, DHCP Relay, ACL, RSTP)..."
               className="w-full bg-white border border-border rounded-lg pl-9 pr-4 py-2 text-xs text-foreground placeholder-muted-light focus:outline-none focus:border-brand shadow-subtle"
             />
           </div>

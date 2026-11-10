@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
-import { 
+import {
   Play, Square, RotateCcw, AlertTriangle, CheckCircle2,
   Network, ShieldAlert, Cpu
 } from "lucide-react";
@@ -58,7 +58,7 @@ export default function Navbar() {
     { name: "Fault Scenarios", href: "/faults" },
     { name: "Test Suite", href: "/tests" },
     { name: "Capacity Planning", href: "/scalability" },
-    { name: "Viva Defense", href: "/viva" },
+    { name: "FAQs", href: "/faqs" },
   ];
 
   const isRunning = simState?.is_running;
@@ -67,7 +67,7 @@ export default function Navbar() {
   return (
     <header className="border-b border-border bg-panel sticky top-0 z-50 shadow-subtle">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between h-16">
-        
+
         {/* Brand / Institution Lockup */}
         <Link href="/" className="flex items-center gap-3 group">
           <div className="w-9 h-9 rounded-md bg-brand text-white flex items-center justify-center font-bold text-sm tracking-wider shadow-sm">
@@ -89,11 +89,10 @@ export default function Navbar() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`relative px-3 py-2 text-xs font-medium transition-colors ${
-                  isActive
+                className={`relative px-3 py-2 text-xs font-medium transition-colors ${isActive
                     ? "text-brand font-semibold"
                     : "text-muted hover:text-foreground"
-                }`}
+                  }`}
               >
                 {item.name}
                 {isActive && (
@@ -106,7 +105,7 @@ export default function Navbar() {
 
         {/* Simulation Controls & Status */}
         <div className="flex items-center gap-3">
-          
+
           {/* Active Faults Tag */}
           {activeFaults.length > 0 && (
             <div className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-status-dangerBg border border-status-dangerBorder text-status-danger text-xs font-medium">
